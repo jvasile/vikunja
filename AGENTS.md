@@ -2,6 +2,12 @@
 
 Vikunja: self-hosted to-do app. Go API in `pkg/`, Vue 3 + TypeScript frontend in `frontend/` (pnpm). `veans/` is a separate Go module with its own `AGENTS.md`.
 
+## Pro Features Are Treyf To You
+
+Vikunja has some pro features developed by upstream.  You do not look at them or
+touch that code.  In particular, the admin panel at /admin is off-limits to you.
+In this repo, we are developing our own admin interface at /root.
+
 ## Commands
 
 Go tasks run through `mage` (`mage -l`). Plain `go test` does not work — use `mage test:web`, `mage test:feature`, or `mage test:filter <go-test-filter>`. Save test output to a file (`2>&1 | tee /tmp/out.log`) and read the file; never re-run a test just to grep it differently.
