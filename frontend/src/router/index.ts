@@ -50,6 +50,25 @@ const router = createRouter({
 			component: () => import('@/views/Home.vue'),
 		},
 		{
+			path: '/root/settings',
+			name: 'root.settings',
+			component: () => import('@/views/root/Settings.vue'),
+			redirect: {name: 'root.settings.general'},
+			meta: {requiresRootAdmin: true},
+			children: [
+				{
+					path: 'general',
+					name: 'root.settings.general',
+					component: () => import('@/views/root/General.vue'),
+				},
+				{
+					path: 'users',
+					name: 'root.settings.users',
+					component: () => import('@/views/root/Users.vue'),
+				},
+			],
+		},
+		{
 			path: '/:pathMatch(.*)*',
 			name: 'not-found',
 			component: NotFoundComponent,
@@ -612,6 +631,15 @@ router.beforeEach(async (to, from) => {
 		}
 		const isAdmin = authStore.info?.is_admin === true
 		if (!featureOn || !isAdmin) {
+			return {name: 'not-found'}
+		}
+	}
+
+	if (to.meta?.requiresRootAdmin) {
+		if (authStore.info?.is_admin === undefined) {
+			await authStore.refreshUserInfo()
+		}
+		if (authStore.info?.is_admin !== true) {
 			return {name: 'not-found'}
 		}
 	}

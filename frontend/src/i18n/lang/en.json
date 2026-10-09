@@ -1713,6 +1713,21 @@
       "years": "year|years"
     }
   },
+  "root": {
+    "title": "Administration",
+    "settings": {
+      "title": "Administration settings",
+      "general": {
+        "title": "General",
+        "registrationLabel": "Allow new users to register",
+        "registrationDescription": "Control whether public registration is open on this instance."
+      },
+      "users": {
+        "title": "Users",
+        "description": "Manage users and their account access."
+      }
+    }
+  },
   "admin": {
     "title": "Administration",
     "labels": {
