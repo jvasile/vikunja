@@ -84,10 +84,31 @@ func CreateUser(s *xorm.Session, user *User, options ...CreateUserOptions) (newU
 		user.Language = config.DefaultSettingsLanguage.GetString()
 	}
 
+	// The first user on an instance must be able to administer it and log in
+	// immediately. Check this before inserting so both properties are persisted
+	// with the new account.
+	userCount, err := s.Count(&User{})
+	if err != nil {
+		return nil, err
+	}
+	firstUser := userCount == 0
+	if firstUser {
+		user.IsAdmin = true
+		if len(options) == 0 {
+			options = append(options, CreateUserOptions{})
+		}
+		options[0].SkipEmailConfirm = true
+	}
+
 	// Insert it
 	_, err = s.Insert(user)
 	if err != nil {
 		return nil, err
+	}
+	if firstUser {
+		if err := config.DisableRegistration(); err != nil {
+			return nil, err
+		}
 	}
 
 	// Get the  full new User
