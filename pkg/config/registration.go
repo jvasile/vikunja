@@ -8,10 +8,10 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// DisableRegistration closes public registration for the running process and
-// persists the setting in config.yml. Existing YAML content is parsed and
+// SetRegistrationEnabled changes public registration for the running process
+// and persists the setting in config.yml. Existing YAML content is parsed and
 // retained; missing mappings are created as needed.
-func DisableRegistration() error {
+func SetRegistrationEnabled(enabled bool) error {
 	configPath := viper.ConfigFileUsed()
 	if configPath == "" {
 		configPath = ResolvePath("config.yml")
@@ -33,7 +33,7 @@ func DisableRegistration() error {
 		service = map[string]any{}
 		values["service"] = service
 	}
-	service["enableregistration"] = false
+	service["enableregistration"] = enabled
 
 	updated, err := yaml.Marshal(values)
 	if err != nil {
@@ -46,6 +46,10 @@ func DisableRegistration() error {
 		return err
 	}
 
-	ServiceEnableRegistration.Set(false)
+	ServiceEnableRegistration.Set(enabled)
 	return nil
 }
+
+// DisableRegistration closes public registration for the running process and
+// persists the setting in config.yml.
+func DisableRegistration() error { return SetRegistrationEnabled(false) }
