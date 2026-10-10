@@ -20,6 +20,8 @@ RUN go install github.com/magefile/mage@latest && \
     mv /go/bin/mage /usr/local/go/bin
 
 WORKDIR /go/src/code.vikunja.io/api
+COPY go.mod go.sum ./
+RUN go mod download
 COPY . ./
 COPY --from=frontendbuilder /build/dist ./frontend/dist
 
