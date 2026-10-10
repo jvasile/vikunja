@@ -4,7 +4,9 @@
 			<FormField label="Username" layout="two-col"><FormInput v-model="newUser.username" required /></FormField>
 			<FormField label="Email" layout="two-col"><FormInput v-model="newUser.email" type="email" required /></FormField>
 			<FormField label="Password" layout="two-col"><FormInput v-model="newUser.password" type="password" required /></FormField>
-			<BaseButton type="submit" :disabled="mutation.isPending.value">Create user</BaseButton>
+			<div class="create-user-actions">
+				<XButton :disabled="mutation.isPending.value" @click="createUser">Create user</XButton>
+			</div>
 		</form>
 	</Card>
 	<Card :title="$t('root.settings.users.listTitle')" class="section-block">
@@ -15,13 +17,13 @@
 					<td>{{ user.id }}</td><td>{{ user.username }}</td><td>{{ user.email }}</td>
 					<td>{{ user.status === 0 ? 'Active' : 'Disabled' }}</td><td>{{ user.is_admin ? 'Yes' : 'No' }}</td>
 					<td class="actions">
-						<BaseButton @click="toggleAdmin(user)">{{ user.is_admin ? 'Revoke admin' : 'Make admin' }}</BaseButton>
-						<BaseButton @click="toggleStatus(user)">{{ user.status === 0 ? 'Disable' : 'Enable' }}</BaseButton>
-						<BaseButton @click="updateUser(user)">Edit</BaseButton>
-						<BaseButton @click="resetPassword(user)">Reset password</BaseButton>
-						<BaseButton @click="sendResetEmail(user)">Email reset</BaseButton>
-						<BaseButton @click="deleteUser(user, 'scheduled')">Schedule delete</BaseButton>
-						<BaseButton @click="deleteUser(user, 'now')">Delete</BaseButton>
+						<XButton @click="toggleAdmin(user)">{{ user.is_admin ? 'Revoke admin' : 'Make admin' }}</XButton>
+						<XButton @click="toggleStatus(user)">{{ user.status === 0 ? 'Disable' : 'Enable' }}</XButton>
+						<XButton @click="updateUser(user)">Edit</XButton>
+						<XButton @click="resetPassword(user)">Reset password</XButton>
+						<XButton @click="sendResetEmail(user)">Email reset</XButton>
+						<XButton @click="deleteUser(user, 'scheduled')">Schedule delete</XButton>
+						<XButton @click="deleteUser(user, 'now')">Delete</XButton>
 					</td>
 				</tr>
 			</tbody>
@@ -32,7 +34,6 @@
 <script setup lang="ts">
 import {reactive} from 'vue'
 import Card from '@/components/misc/Card.vue'
-import BaseButton from '@/components/base/BaseButton.vue'
 import FormField from '@/components/input/FormField.vue'
 import FormInput from '@/components/input/FormInput.vue'
 import {useRootUsersQuery, useRootUserMutation, type RootUser} from '@/client/queries/rootUsers'
@@ -82,3 +83,11 @@ async function deleteUser(user: RootUser, mode: 'now' | 'scheduled') {
 	await query.refetch()
 }
 </script>
+
+<style lang="scss" scoped>
+.create-user-actions {
+	margin-inline-start: 50%;
+	display: flex;
+	justify-content: flex-end;
+}
+</style>
