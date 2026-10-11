@@ -17,13 +17,21 @@
 					<td>{{ user.id }}</td><td>{{ user.username }}</td><td>{{ user.email }}</td>
 					<td>{{ user.status === 0 ? 'Active' : 'Disabled' }}</td><td>{{ user.is_admin ? 'Yes' : 'No' }}</td>
 					<td class="actions">
-						<XButton @click="toggleAdmin(user)">{{ user.is_admin ? 'Revoke admin' : 'Make admin' }}</XButton>
-						<XButton @click="toggleStatus(user)">{{ user.status === 0 ? 'Disable' : 'Enable' }}</XButton>
-						<XButton @click="updateUser(user)">Edit</XButton>
-						<XButton @click="resetPassword(user)">Reset password</XButton>
-						<XButton @click="sendResetEmail(user)">Email reset</XButton>
-						<XButton @click="deleteUser(user, 'scheduled')">Schedule delete</XButton>
-						<XButton @click="deleteUser(user, 'now')">Delete</XButton>
+						<Dropdown
+							class="user-actions-menu"
+							trigger-label="User actions"
+							trigger-icon="ellipsis-h"
+						>
+							<template #default="{close}">
+								<DropdownItem @click="close(); toggleAdmin(user)">{{ user.is_admin ? 'Revoke admin' : 'Make admin' }}</DropdownItem>
+								<DropdownItem @click="close(); toggleStatus(user)">{{ user.status === 0 ? 'Disable' : 'Enable' }}</DropdownItem>
+								<DropdownItem @click="close(); updateUser(user)">Edit</DropdownItem>
+								<DropdownItem @click="close(); resetPassword(user)">Reset password</DropdownItem>
+								<DropdownItem @click="close(); sendResetEmail(user)">Email reset</DropdownItem>
+								<DropdownItem @click="close(); deleteUser(user, 'scheduled')">Schedule delete</DropdownItem>
+								<DropdownItem @click="close(); deleteUser(user, 'now')">Delete</DropdownItem>
+							</template>
+						</Dropdown>
 					</td>
 				</tr>
 			</tbody>
@@ -34,6 +42,8 @@
 <script setup lang="ts">
 import {reactive} from 'vue'
 import Card from '@/components/misc/Card.vue'
+import Dropdown from '@/components/misc/Dropdown.vue'
+import DropdownItem from '@/components/misc/DropdownItem.vue'
 import FormField from '@/components/input/FormField.vue'
 import FormInput from '@/components/input/FormInput.vue'
 import {useRootUsersQuery, useRootUserMutation, type RootUser} from '@/client/queries/rootUsers'
@@ -85,6 +95,20 @@ async function deleteUser(user: RootUser, mode: 'now' | 'scheduled') {
 </script>
 
 <style lang="scss" scoped>
+.actions {
+	text-align: end;
+}
+
+.user-actions-menu {
+	opacity: 0;
+	transition: opacity $transition;
+}
+
+tr:hover .user-actions-menu,
+tr:focus-within .user-actions-menu {
+	opacity: 1;
+}
+
 .create-user-actions {
 	margin-inline-start: 50%;
 	display: flex;
